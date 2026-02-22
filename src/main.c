@@ -1,0 +1,10 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "library.h"
+
+int main(int argc, char *argv) {
+    Library *MyLib;
+
+    lb_init(MyLib);
+}
