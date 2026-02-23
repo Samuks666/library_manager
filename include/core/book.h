@@ -1,6 +1,10 @@
 #ifndef BOOK_H
 #define BOOK_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define MAX_TITLE 128
 #define ISBN_SIZE 18
 #define MAX_DESCRIPTION 512
@@ -99,5 +103,9 @@ int *book_get_genre_ids(Book *book);
 /// @return 0 if Success | 1 if False
 int *book_get_author_ids(Book *book);
 
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

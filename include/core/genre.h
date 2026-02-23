@@ -1,6 +1,8 @@
 #ifndef GENRE_H
 #define GENRE_H
-
+#ifdef __cplusplus
+extern "C" {
+#endif
 #define MAX_GENRE 64
 
 typedef struct {
@@ -19,5 +21,9 @@ int update_genre_id(Genre *genre, const int new_id);
 /// @param name New Name to be assigned
 /// @return 0 Success - 1 Fail
 int update_genre_name(Genre *genre, const char *name);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

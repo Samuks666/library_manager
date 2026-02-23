@@ -1,6 +1,10 @@
 #ifndef LOG_H
 #define LOG_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define LOG_INFO(fmt, ...) \
     log_register_internal("INFO", __FILE__, __LINE__, __func__, fmt, ##__VA_ARGS__)
 
@@ -22,5 +26,9 @@ void log_register_internal(
 );
 void log_read();
 void log_reset();
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 # include "book.h"
 #include "log.h"
@@ -80,7 +81,7 @@ int book_add_genre(Book *book, const int genre_id) {
         return 1;
     }
 
-    if (!book_reserve_genre(book)) {
+    if (book_reserve_genre(book) != 0) {
         LOG_ERROR(EXPAND_CAPACITY);
         return 1;
     }
@@ -89,7 +90,7 @@ int book_add_genre(Book *book, const int genre_id) {
     book->genre_count++;
 
     LOG_INFO("Book Genre Added - %d", genre_id);
-    return 1;
+    return 0;
 }
 
 int book_remove_genre(Book *book, const int genre_id) {
@@ -116,8 +117,8 @@ int book_remove_genre(Book *book, const int genre_id) {
     }
 
     book->genre_count--;
-    memset(&book->author_ids[book->genre_count], 0, sizeof(int*));
-
+    memset(&book->genre_ids[book->genre_count], 0, sizeof(int));
+    
     LOG_INFO("Book Genre Removed - %d", genre_id);
 
     return 0;
@@ -134,7 +135,7 @@ int book_add_author(Book *book, const int author_id){
         return 1;
     }
 
-    if (!book_reserve_author(book)) {
+    if (book_reserve_author(book) != 0) {
         LOG_ERROR(EXPAND_CAPACITY);
         return 1;
     }
@@ -143,7 +144,7 @@ int book_add_author(Book *book, const int author_id){
     book->author_count++;
 
     LOG_INFO("Book Author Added - %d", author_id);
-    return 1;
+    return 0;
 }
 
 int book_remove_author(Book *book, const int author_id) {
@@ -169,10 +170,10 @@ int book_remove_author(Book *book, const int author_id) {
         book->author_ids[i] = book->author_ids[i + 1];
     }
 
-    book->genre_count--;
-    memset(&book->author_ids[book->genre_count], 0, sizeof(int*));
+    book->author_count--;
+    memset(&book->author_ids[book->author_count], 0, sizeof(int));
 
-    LOG_INFO("Book Genre Removed - %d", author_id);
+    LOG_INFO("Book Author Removed - %d", author_id);
 
     return 0;
 }
@@ -180,7 +181,7 @@ int book_remove_author(Book *book, const int author_id) {
 int book_reserve_genre(Book *book) {
     if (book->genre_count >= book->genre_capacity) {
         int new_cap = book->genre_capacity ? book->genre_capacity * 2 : 2;
-        Book *tmp = realloc(book, new_cap * sizeof(int));
+        int *tmp = realloc(book->genre_ids, new_cap * sizeof(int));
 
         if (!tmp) {
             LOG_ERROR(REALLOCATION_ERROR);
@@ -189,16 +190,16 @@ int book_reserve_genre(Book *book) {
 
         book->genre_ids = tmp;
         book->genre_capacity = new_cap;
+        LOG_INFO("Capacity Expanded - Genres");
     }
 
-    LOG_INFO("Capacity Expanded - Genres");
     return 0;
 }
 
 int book_reserve_author(Book *book) {
     if (book->author_count >= book->author_capacity) {
         int new_cap = book->author_capacity ? book->author_capacity * 2 : 2;
-        Book *tmp = realloc(book, new_cap * sizeof(int));
+        int *tmp = realloc(book->author_ids, new_cap * sizeof(int));
 
         if (!tmp) {
             LOG_ERROR(REALLOCATION_ERROR);
@@ -207,9 +208,9 @@ int book_reserve_author(Book *book) {
 
         book->author_ids = tmp;
         book->author_capacity = new_cap;
+        LOG_INFO("Capacity Expanded - Authors");
     }
 
-    LOG_INFO("Capacity Expanded - Authors");
     return 0;
 }
 

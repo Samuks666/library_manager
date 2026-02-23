@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "library.h"
+#include "log.h"
 
-int main(int argc, char *argv) {
-    Library *MyLib;
-
-    lb_init(MyLib);
+int main() {
+    printf("Compilado \n");
+    return 0;
 }

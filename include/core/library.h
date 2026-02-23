@@ -4,6 +4,10 @@
 #ifndef LIBRARY_H
 #define LIBRARY_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "book.h"
 #include "author.h"
 #include "genre.h"
@@ -86,5 +90,9 @@ int lb_reserve_authors(Library *lib);
 /// @param lib Library to expand the capacity of genres
 /// @return 0 if Success | 1 if False
 int lb_reserve_genres(Library *lib);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

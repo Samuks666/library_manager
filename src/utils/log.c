@@ -60,7 +60,7 @@ void log_read() {
 
     if(log == NULL) return;
 
-    char *line[256];
+    char line[256];
 
     while(fgets(line, sizeof(line), log)) {
         printf("%s", line);

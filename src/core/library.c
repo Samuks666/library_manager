@@ -111,7 +111,7 @@ int lb_add_book(Library *lib, const Book *book) {
         return 1;
     }
 
-    if (!lb_reserve_books(lib)) {
+    if (lb_reserve_books(lib) != 0) {
         LOG_ERROR(EXPAND_CAPACITY);
         return 1;
     }
@@ -142,6 +142,9 @@ int lb_remove_book(Library *lib, const char *isbn){
         return 1;
     }
 
+    free(lib->books[rm_index].genre_ids);
+    free(lib->books[rm_index].author_ids);
+
     for (int i = rm_index; i < lib->book_count - 1; i++) {
         lib->books[i] = lib->books[i + 1];
     }
@@ -161,7 +164,7 @@ int lb_add_author(Library *lib, const char *author_name) {
         return 1;
     }
 
-    if (!lb_reserve_authors(lib)) {
+    if (lb_reserve_authors(lib) != 0) {
         LOG_ERROR(EXPAND_CAPACITY);
         return 1;
     }
@@ -184,7 +187,7 @@ int lb_add_genre(Library *lib, const char *genre_name) {
         return 1;
     }
 
-    if (!lb_reserve_genres(lib)) {
+    if (lb_reserve_genres(lib) != 0) {
         LOG_ERROR(EXPAND_CAPACITY);
         return 1;
     }
@@ -213,9 +216,9 @@ int lb_reserve_books(Library *lib) {
 
         lib->books = tmp;
         lib->book_capacity = new_cap;
+        LOG_INFO("Capacity Expanded - Books");
     }
 
-    LOG_INFO("Capacity Expanded - Books");
     return 0;
 }
 
@@ -231,16 +234,16 @@ int lb_reserve_authors(Library *lib) {
 
         lib->authors = tmp;
         lib->author_capacity = new_cap;
+        LOG_INFO("Capacity Expanded - Authors");
     }
 
-    LOG_INFO("Capacity Expanded - Authors");
     return 0;
 }
 
 int lb_reserve_genres(Library *lib) {
     if (lib->genre_count >= lib->genre_capacity) {
         int new_cap = lib->genre_capacity ? lib->genre_capacity * 2 : 2;
-        Author *tmp = realloc(lib->genres,new_cap * sizeof(Genre));
+        Genre *tmp = realloc(lib->genres,new_cap * sizeof(Genre));
 
         if (!tmp) {
             LOG_ERROR(REALLOCATION_ERROR);
@@ -249,9 +252,9 @@ int lb_reserve_genres(Library *lib) {
 
         lib->genres = tmp;
         lib->genre_capacity = new_cap;
+        LOG_INFO("Capacity Expanded - Genre");
     }
 
-    LOG_INFO("Capacity Expanded - Genre");
     return 0;
 }
 
