@@ -1,5 +1,10 @@
 cmake_minimum_required(VERSION 3.16)
 
+# Set FetchContent policy for NEW behavior (extract timestamps from extraction time)
+if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.24)
+    cmake_policy(SET CMP0135 NEW)
+endif()
+
 project(LibraryManager
     VERSION 1.0
     LANGUAGES C CXX
