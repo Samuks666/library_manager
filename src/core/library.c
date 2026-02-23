@@ -183,7 +183,7 @@ int lb_add_genre(Library *lib, const char *genre_name) {
         return 1;
     }
 
-    if (!lb_reserve_authors(lib)) {
+    if (!lb_reserve_genres(lib)) {
         LOG_ERROR(EXPAND_CAPACITY);
         return 1;
     }
@@ -199,7 +199,7 @@ int lb_add_genre(Library *lib, const char *genre_name) {
     return 0;
 }
 
-// Utils
+// Utils Functions
 int lb_reserve_books(Library *lib) {
     if (lib->book_count >= lib->book_capacity) {
         int new_cap = lib->book_capacity ? lib->book_capacity * 2 : 2;
@@ -236,6 +236,22 @@ int lb_reserve_authors(Library *lib) {
     return 0;
 }
 
+int lb_reserve_genres(Library *lib) {
+    if (lib->genre_count >= lib->genre_capacity) {
+        int new_cap = lib->genre_capacity ? lib->genre_capacity * 2 : 2;
+        Author *tmp = realloc(lib->genres,new_cap * sizeof(Genre));
 
+        if (!tmp) {
+            LOG_ERROR(REALLOCATION_ERROR);
+            return 1;
+        }
+
+        lib->genres = tmp;
+        lib->genre_capacity = new_cap;
+    }
+
+    LOG_INFO("Capacity Expanded - Genre");
+    return 0;
+}
 
 

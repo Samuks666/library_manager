@@ -16,7 +16,7 @@ int update_genre_id(Genre *genre, const int new_id);
 
 /// @brief Function to update a genre ID
 /// @param genre Original Genre to update
-/// @param name New Name to get assigned
+/// @param name New Name to be assigned
 /// @return 0 Success - 1 Fail
 int update_genre_name(Genre *genre, const char *name);
 
