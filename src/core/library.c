@@ -16,6 +16,7 @@ int lb_init(Library *lib) {
 
     lib->book_capacity = 2;
     lib->author_capacity = 2;
+    lib->genre_capacity = 2;
 
     lib->books = malloc(lib->book_capacity * sizeof(Book));
 
@@ -101,7 +102,7 @@ void lb_clear(Library *lib) {
 //books
 int lb_add_book(Library *lib, const Book *book) {
     if (!lib || !book) {
-        LOG_ERROR("Null Library or Null Book");
+        LOG_ERROR(NULL_ERROR);
         return 1;
     }
 
@@ -111,7 +112,7 @@ int lb_add_book(Library *lib, const Book *book) {
     }
 
     if (!lb_reserve_books(lib)) {
-        LOG_ERROR("Expand Capacity");
+        LOG_ERROR(EXPAND_CAPACITY);
         return 1;
     }
 
@@ -124,7 +125,7 @@ int lb_add_book(Library *lib, const Book *book) {
 
 int lb_remove_book(Library *lib, const char *isbn){
     if (!lib || !isbn) {
-        LOG_ERROR("Null Library or Null ISBN");
+        LOG_ERROR(NULL_ERROR);
         return 1;
     }
 
@@ -156,12 +157,12 @@ int lb_remove_book(Library *lib, const char *isbn){
 //authors
 int lb_add_author(Library *lib, const char *author_name) {
     if (!lib || !author_name) {
-        LOG_ERROR("Null Library or Author Name");
+        LOG_ERROR(NULL_ERROR);
         return 1;
     }
 
     if (!lb_reserve_authors(lib)) {
-        LOG_ERROR("Expand Capacity");
+        LOG_ERROR(EXPAND_CAPACITY);
         return 1;
     }
 
@@ -206,7 +207,7 @@ int lb_reserve_books(Library *lib) {
         Book *tmp = realloc(lib->books, new_cap * sizeof(Book));
 
         if (!tmp) {
-            LOG_ERROR("Realloc Failed");
+            LOG_ERROR(REALLOCATION_ERROR);
             return 1;
         }
 
@@ -224,7 +225,7 @@ int lb_reserve_authors(Library *lib) {
         Author *tmp = realloc(lib->authors,new_cap * sizeof(Author));
 
         if (!tmp) {
-            LOG_ERROR("Realloc failed");
+            LOG_ERROR(REALLOCATION_ERROR);
             return 1;
         }
 
