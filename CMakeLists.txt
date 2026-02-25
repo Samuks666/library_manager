@@ -34,6 +34,7 @@ endif()
 # --------------------------------------------------------------------
 
 option(ENABLE_TESTING    "Enable unit tests with Google Test" ON)
+option(BUILD_RELEASE_APP "Build release application (library_manager)" ON)
 option(ENABLE_SANITIZERS "Enable Address/UB Sanitizers (Debug only)" ON)
 option(ENABLE_WARNINGS   "Enable extra compiler warnings" ON)
 
@@ -75,6 +76,7 @@ endfunction()
 # Libraries
 # --------------------------------------------------------------------
 
+# ---- core ----------------------------------------------------------
 add_library(core
     src/core/book.c
     src/core/author.c
@@ -86,6 +88,7 @@ target_include_directories(core
     PUBLIC
         ${PROJECT_SOURCE_DIR}/include/core
         ${PROJECT_SOURCE_DIR}/include/utils
+        ${PROJECT_SOURCE_DIR}/include/cli
 )
 
 enable_project_warnings(core)
@@ -105,22 +108,83 @@ target_include_directories(utils
 enable_project_warnings(utils)
 enable_sanitizers(utils)
 
-# --------------------------------------------------------------------
-# Executable
-# --------------------------------------------------------------------
+# ---- cli ------------------------------------------------------------
 
-add_executable(test_app
-    src/main.c
+add_library(cli
+    src/cli/cli.c
 )
 
-target_link_libraries(test_app
-    PRIVATE
+target_include_directories(cli
+    PUBLIC
+        ${PROJECT_SOURCE_DIR}/include/cli
+        ${PROJECT_SOURCE_DIR}/include/core
+        ${PROJECT_SOURCE_DIR}/include/utils
+)
+
+# Link ncurses library
+find_package(Curses REQUIRED)
+target_link_libraries(cli
+    PUBLIC
+        ${CURSES_LIBRARIES}
         core
         utils
 )
 
-enable_project_warnings(test_app)
-enable_sanitizers(test_app)
+target_include_directories(cli
+    PUBLIC
+        ${CURSES_INCLUDE_DIR}
+)
+
+enable_project_warnings(cli)
+enable_sanitizers(cli)
+
+# --------------------------------------------------------------------
+# Executable (Main Application)
+# --------------------------------------------------------------------
+
+if(BUILD_RELEASE_APP)
+    add_executable(library_manager
+        src/main.c
+    )
+
+    target_link_libraries(library_manager
+        PRIVATE
+            core
+            utils
+            cli
+    )
+
+    enable_project_warnings(library_manager)
+    
+    # Only enable sanitizers in Debug mode
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        enable_sanitizers(library_manager)
+    endif()
+    
+    message(STATUS "Release application 'library_manager' will be built")
+else()
+    message(STATUS "Release application disabled")
+endif()
+
+# --------------------------------------------------------------------
+# Testing Executable (Separate from Release)
+# --------------------------------------------------------------------
+
+if(ENABLE_TESTING)
+    add_executable(test_app
+        src/main.c
+    )
+
+    target_link_libraries(test_app
+        PRIVATE
+            core
+            utils
+            cli
+    )
+
+    enable_project_warnings(test_app)
+    enable_sanitizers(test_app)
+endif()
 
 # --------------------------------------------------------------------
 # Testing with Google Test
@@ -140,8 +204,9 @@ endif()
 message(STATUS "")
 message(STATUS "====== Library Manager Configuration ======")
 message(STATUS "Build type:       ${CMAKE_BUILD_TYPE}")
-message(STATUS "Sanitizers:       ${ENABLE_SANITIZERS} (Debug only)")
+message(STATUS "Release app:      ${BUILD_RELEASE_APP}")
 message(STATUS "Tests:            ${ENABLE_TESTING}")
+message(STATUS "Sanitizers:       ${ENABLE_SANITIZERS} (Debug only)")
 message(STATUS "Warnings:         ${ENABLE_WARNINGS}")
 message(STATUS "==========================================")
 message(STATUS "")

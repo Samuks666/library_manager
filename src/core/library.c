@@ -52,6 +52,9 @@ void lb_free(Library *lib) {
         return;
     }
 
+    free(lib->books->author_ids);
+    free(lib->books->genre_ids);
+
     free(lib->books);
     lib->books = NULL;
 
@@ -80,6 +83,9 @@ void lb_clear(Library *lib) {
         LOG_ERROR(NULL_ERROR);
         return;
     }
+
+    free(lib->books->author_ids);
+    free(lib->books->genre_ids);
 
     free(lib->books);
     lib->books = NULL;
